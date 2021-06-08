@@ -4,3 +4,6 @@
 tsconfig.json
 /test
 /username.json
+jest.config.ts
+.gitignore
+coverage/

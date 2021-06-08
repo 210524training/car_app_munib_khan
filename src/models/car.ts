@@ -12,13 +12,10 @@ export function isPosition(value: string): value is Position {
 
 export default class Car {
   constructor(
-    public name: string ,
-    public price: number,
-    public position: string,
-    public stock: number,
-  ) {}
-
-  toString(){
-    return `[${this.position}] ${this.name} | ${this.price} |${this.stock} left`
-  }
+    public name: string = '',
+    public price: number = 0,
+    public position: Position = 'A0',
+    public stock: number = 0,
+    public year: number = 1990
+  ) { }
 }

@@ -3,11 +3,11 @@
 //password
 //role
 
-export default class Customer {
+export default class User {
     constructor(
         public username: string,
         public password: string,
-        public balance: number,
-        public role: "customer" | "employee"
+        public role: "customer" | "employee",
+        public balance: number
     ) { }
 }

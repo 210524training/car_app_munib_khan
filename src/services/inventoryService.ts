@@ -1,35 +1,36 @@
 
-import Car from "../models/car";
+import Car, { Position } from "../models/car";
+import inventoryRepository from "../repositories/inventoryRepository";
 
+export function productString(item: Car) {
+    return `[${item.position}] ${item.name} | $${item.price.toFixed(2)} | ${item.year}| ${item.stock} left`;
+}
 
-export default class InventoryService {
-    constructor(public inventory: Car[] = []) { }
+class InventoryService {
+    constructor(
+        private repository = inventoryRepository,
+    ) { }
 
-    //As a user, I can login -2 points
-    userLogin(login: string) {
+    async restockItem(position: Position): Promise<void> {
+        const maxStock = 10;
+        const item = await this.repository.getByPosition(position);
+        if (item) {
+            item.stock = maxStock;
 
-    }
+            const success = await this.repository.updateProduct(item);
 
-    getByPosition(position: string): Car {
-
-        const item = this.inventory.find((item) => {
-            if (item.position === position) {
-                return item;
+            if (!success) {
+                throw new Error('Failed to restock item');
             }
-        })
-
-        throw new Error("No Car found in inventory")
+        }
     }
 
-    // add a car to the lot
-    restockCar(itemName: string): void {
-        const maxStock: number = 10;
-        const addCar = this.inventory.find((item) => item.name === itemName);
-        if (addCar) { addCar.stock = maxStock }
-    }
-
-    displayContents(): void {
-        this.inventory.forEach((item) => console.log(item.toString));
+    async displayContents(): Promise<void> {
+        const inventory = await this.repository.getAll();
+        inventory.forEach((item) => console.log(productString(item)));
     }
 }
+
+export default new InventoryService();
+
 

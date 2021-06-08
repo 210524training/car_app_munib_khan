@@ -1,41 +1,41 @@
-import Customer from "../models/user";
-import fs from 'fs';
+import User from "../models/user";
 
-class UserNameService {
+export class UserService {
+    public currentUser: User | undefined;
+
     constructor(
-        public username: Customer[] = []
+        public users: User[] = [],
     ) { }
 
-    findByUserName(username: string): Customer | undefined {
-        return this.username.find(user => user.username === username)
+    findByUsername(username: string): User | undefined {
+        return this.users.find((user) => user.username === username);
     }
-    register(user: Customer): void {
-        if (!this.findByUserName(user.username)) {
-            this.username.push(user);
+
+    register(user: User): void {
+        if (!this.findByUsername(user.username)) {
+            this.users.push(user);
         }
     }
 
-    save(): void {
-        const data = JSON.stringify(this.username)
-        fs.writeFileSync("username.json", data)
+    login(username: string, password: string): boolean {
+        const found = this.findByUsername(username);
+
+        if (!found || found.password !== password) {
+            return false;
+        }
+
+        this.currentUser = found;
+        return true;
     }
 
-    async load(): Promise<void> {
-        return new Promise<void>(
-            (resolve, reject) => {
-                fs.readFile("username.json", (err, buffer) => {
-                    if (err) {
-                        reject();
-                    }
-                    this.username = JSON.parse(buffer.toString());
-                    resolve();
-                })
-            }
-        )
-
+    logout(): void {
+        this.currentUser = undefined;
     }
 
 }
 
 
-export default new UserNameService();
+
+
+
+export default new UserService();
